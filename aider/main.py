@@ -947,8 +947,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         original_read_only_fnames=read_only_fnames,
     )
 
+    summarizer_models_list = []
+    if args.summarizer_model:
+        for model_name in args.summarizer_model:
+            summarizer_models_list.append(models.Model(model_name, verbose=args.verbose))
+    else:
+        summarizer_models_list = [main_model.weak_model, main_model]
+
     summarizer = ChatSummary(
-        [main_model.weak_model, main_model],
+        summarizer_models_list,
         args.max_chat_history_tokens or main_model.max_chat_history_tokens,
     )
 

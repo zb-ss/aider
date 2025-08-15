@@ -192,10 +192,14 @@ def get_parser(default_config_files, git_root):
         "--weak-model",
         metavar="WEAK_MODEL",
         default=None,
-        help=(
-            "Specify the model to use for commit messages and chat history summarization (default"
-            " depends on --model)"
-        ),
+        help="Specify the model to use for commit messages (default depends on --model)",
+    )
+    group.add_argument(
+        "--summarizer-model",
+        nargs="+",
+        metavar="SUMMARIZER_MODEL",
+        default=None,
+        help="Specify the model(s) to use for chat history summarization (default: weak model)",
     )
     group.add_argument(
         "--editor-model",

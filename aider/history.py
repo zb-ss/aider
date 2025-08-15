@@ -165,7 +165,7 @@ def main():
     parser.add_argument("filename", help="Markdown file to parse")
     args = parser.parse_args()
 
-    model_names = ["gpt-3.5-turbo", "gpt-4"]  # Add more model names as needed
+    model_names = ["gemini-2.5-flash", "gpt-5o-mini"]
     model_list = [models.Model(name) for name in model_names]
     summarizer = ChatSummary(model_list)
 

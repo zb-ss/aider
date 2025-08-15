@@ -155,8 +155,14 @@ cog.outl("```")
 ## Enable/disable automatic acceptance of architect changes (default: True)
 #auto-accept-architect: true
 
-## Specify the model to use for commit messages and chat history summarization (default depends on --model)
+## Specify the model to use for commit messages (default depends on --model)
 #weak-model: xxx
+
+## Specify the model(s) to use for chat history summarization (default: weak model)
+#summarizer-model:
+#  - xxx
+#  - yyy
+#  - zzz
 
 ## Specify the model to use for editor tasks (default depends on --model)
 #editor-model: xxx
