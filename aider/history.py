@@ -125,9 +125,8 @@ class ChatSummary:
             except Exception as e:
                 print(f"Summarization failed for model {model.name}: {str(e)}")
 
-        err = "summarizer unexpectedly failed for all models"
-        print(err)
-        raise ValueError(err)
+        print("summarizer unexpectedly failed for all models, returning empty history")
+        return []
 
     def summarize_all_as_text(self, messages, prompt, max_tokens=None):
         content = ""
@@ -157,7 +156,8 @@ class ChatSummary:
             except Exception as e:
                 print(f"Summarization failed for model {model.name}: {str(e)}")
 
-        raise ValueError("summarizer unexpectedly failed for all models")
+        print("summarizer unexpectedly failed for all models, returning empty string")
+        return ""
 
 
 def main():
