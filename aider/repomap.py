@@ -9,6 +9,7 @@ from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
 
+import tree_sitter
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -100,6 +101,38 @@ class RepoMap:
         "type",  # Type definitions
         # Add more based on tree-sitter queries if needed
     }
+
+    @staticmethod
+    def get_file_stub(fname, io):
+        """Generate a complete structural outline of a source code file.
+
+        Args:
+            fname (str): Absolute path to the source file
+            io: InputOutput instance for file operations
+
+        Returns:
+            str: Formatted outline showing the file's structure
+        """
+        # Use cached instance if available
+        if not hasattr(RepoMap, "_stub_instance"):
+            RepoMap._stub_instance = RepoMap(map_tokens=0, io=io)
+
+        rm = RepoMap._stub_instance
+
+        rel_fname = rm.get_rel_fname(fname)
+
+        # Reuse existing tag parsing
+        tags = rm.get_tags(fname, rel_fname)
+        if not tags:
+            return "# No outline available"
+
+        # Get all definition lines
+        lois = [tag.line for tag in tags if tag.kind == "def"]
+
+        # Reuse existing tree rendering
+        outline = rm.render_tree(fname, rel_fname, lois)
+
+        return f"{outline}"
 
     def __init__(
         self,
@@ -413,8 +446,13 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+        if sys.version_info >= (3, 10):
+            query = tree_sitter.Query(language, query_scm)
+            cursor = tree_sitter.QueryCursor(query)
+            captures = cursor.captures(tree.root_node)
+        else:
+            query = language.query(query_scm)
+            captures = query.captures(tree.root_node)
 
         saw = set()
         if USING_TSL_PACK:
