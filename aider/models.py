@@ -437,7 +437,7 @@ class Model(ModelSettings):
             return  # <--
 
         last_segment = model.split("/")[-1]
-        if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
+        if last_segment in ("gpt-5", "gpt-5-codex", "gpt-5-2025-08-07"):
             self.use_temperature = False
             self.edit_format = "diff"
             if "reasoning_effort" not in self.accepts_settings:
