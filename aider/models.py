@@ -970,7 +970,7 @@ class Model(ModelSettings):
         kwargs["messages"] = messages
 
         # Are we using github copilot?
-        if "GITHUB_COPILOT_TOKEN" in os.environ or self.name.startswith("github_copilot/"):
+        if "GITHUB_COPILOT_TOKEN" in os.environ and self.name.startswith("github_copilot/"):
             if "extra_headers" not in kwargs:
                 kwargs["extra_headers"] = {
                     "Editor-Version": f"aider/{__version__}",
