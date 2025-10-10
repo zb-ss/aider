@@ -928,13 +928,49 @@ class Model(ModelSettings):
         effective_tools = tools if tools is not None else functions
 
         if effective_tools:
+            # print("=" * 80)
+            # print("DEBUG: Tools being sent to API:")
+            # dump(effective_tools)
+            # print("=" * 80)
+    
             # Check if we have legacy format functions (which lack a 'type' key) and convert them.
-            # This is a simplifying assumption that works for aider's use cases.
-            is_legacy = any("type" not in tool for tool in effective_tools)
-            if is_legacy:
-                kwargs["tools"] = [dict(type="function", function=tool) for tool in effective_tools]
-            else:
-                kwargs["tools"] = effective_tools
+            converted_tools = []
+            for tool in effective_tools:
+                if "type" not in tool:
+                    # This is legacy format - convert it
+                    if "name" in tool:
+                        converted_tools.append({
+                            "type": "function",
+                            "function": tool
+                        })
+                else:
+                    # Already in modern format - but need to clean it up for certain models
+                    clean_tool = {"type": tool["type"]}
+                    if "function" in tool:
+                        # Remove 'strict' for models that don't support it (gpt-5, o1, etc.)
+                        # Keep it for models that do support structured outputs
+                        model_name = self.name.lower()
+                        # Models that don't support strict
+                        no_strict_patterns = ['/o1', '/o3']
+                        supports_strict = not any(x in model_name for x in no_strict_patterns)
+
+                        # Specific models that don't support strict
+                        if model_name.startswith('gpt-5') and 'codex' not in model_name:
+                            supports_strict = False
+                
+                        if supports_strict:
+                            clean_function = tool["function"].copy()
+                        else:
+                            clean_function = {k: v for k, v in tool["function"].items() if k != "strict"}
+                            # Also clean the parameters object
+                            if "parameters" in clean_function:
+                                clean_params = {k: v for k, v in clean_function["parameters"].items() if k != "$schema"}
+                                clean_function["parameters"] = clean_params
+                    
+                        clean_tool["function"] = clean_function
+                    converted_tools.append(clean_tool)
+                
+            kwargs["tools"] = converted_tools
 
         # Forcing a function call is for legacy style `functions` with a single function.
         # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.
@@ -968,6 +1004,13 @@ class Model(ModelSettings):
         if self.verbose:
             dump(kwargs)
         kwargs["messages"] = messages
+        
+        # ADD THIS DEBUG OUTPUT:
+        # if "tools" in kwargs:
+        #     print("=" * 80)
+        #     print("FINAL TOOLS BEING SENT TO LITELLM:")
+        #     dump(kwargs["tools"])
+        #     print("=" * 80)
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ and self.name.startswith("github_copilot/"):
@@ -980,6 +1023,33 @@ class Model(ModelSettings):
         try:
             res = litellm.completion(**kwargs)
         except Exception as err:
+            # Dump the full error details
+            # print("=" * 80)
+            # print("LITELLM EXCEPTION DETAILS:")
+            # print("=" * 80)
+            # print(f"Exception Type: {type(err).__name__}")
+            # print(f"Exception Message: {str(err)}")
+            # print("-" * 80)
+            
+            # # Use the dump() function to show all exception attributes
+            # dump(err)
+            
+            # # Try to get more details from the exception
+            # if hasattr(err, 'response'):
+            #     print(f"Response Object: {err.response}")
+            #     if hasattr(err.response, 'text'):
+            #         print(f"Response Text: {err.response.text}")
+            #     if hasattr(err.response, 'status_code'):
+            #         print(f"Status Code: {err.response.status_code}")
+            
+            # # Print the full exception with traceback
+            # import traceback
+            # print("-" * 80)
+            # print("Full Traceback:")
+            # traceback.print_exc()
+            # print("=" * 80)
+            
+            # Original error behavior
             res = "Model API Response Error. Please retry the previous request"
 
             if self.verbose:
