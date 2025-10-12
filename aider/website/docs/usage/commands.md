@@ -5,10 +5,11 @@ description: Control aider with in-chat commands like /add, /model, etc.
 ---
 
 # In-chat commands
+
 {: .no_toc }
 
 - TOC
-{:toc}
+  {:toc}
 
 ## Slash commands
 
@@ -40,6 +41,7 @@ cog.out(get_help_md())
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/history-search** | Fuzzy search your command history and paste the selected command into the chat. |
+| **/session**          | Manage chat sessions. Subcommands: list, save \<name\>, load \<name\>, delete \<name\>, view \<name\>.          |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
 | **/load** | Load and execute commands from a file |
 | **/ls** | List all known files and indicate which are included in the chat session |
@@ -78,11 +80,13 @@ or CONTROL-R to search your message history.
 
 ## Interrupting with CONTROL-C
 
-It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
+It's always safe to use Control-C to interrupt aider if it isn't providing a useful response. The partial response
+remains in the conversation, so you can refer to it when you reply to the LLM with more information or direction.
 
 ## Keybindings
 
-The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which provides emacs and vi keybindings. 
+The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) which
+provides emacs and vi keybindings.
 
 ### Emacs
 
@@ -102,7 +106,6 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-R` : Reverse search in command history.
 - `Ctrl-X Ctrl-E` : Open the current input in an external editor
 - `Ctrl-Y` : Paste (yank) text that was previously cut.
-
 
 ### Vi
 

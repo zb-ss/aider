@@ -32,3 +32,9 @@
 aider/__version__.py
 aider/_version.py
 *.pyc
+.venv/
+.#*
+.gitattributes
+tmp.benchmarks/
+.docker_bash_history
+.idea/
