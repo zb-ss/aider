@@ -432,7 +432,10 @@ class InputOutput:
             else:
                 # A simple ascii spinner
                 self.spinner_frames = SPINNERS["line"]["frames"]
+        else:
+            self.spinner_frames = []
 
+        if fancy_input:
             # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
