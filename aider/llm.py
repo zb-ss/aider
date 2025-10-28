@@ -45,6 +45,7 @@ class LazyLiteLLM:
 
         self._lazy_module = importlib.import_module("litellm")
         self._lazy_module.suppress_debug_info = True
+        self._lazy_module.turn_off_message_logging = True
         self._lazy_module.set_verbose = False
         self._lazy_module.drop_params = True
         self._lazy_module._logging._disable_debugging()
