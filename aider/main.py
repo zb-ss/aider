@@ -1314,7 +1314,9 @@ def load_slow_imports(swallow=True):
 
     try:
         import httpx  # noqa: F401
-        import litellm  # noqa: F401
+        from aider.llm import litellm
+
+        litellm._load_litellm()
         import networkx  # noqa: F401
         import numpy  # noqa: F401
     except Exception as e:
