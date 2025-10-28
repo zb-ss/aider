@@ -60,6 +60,7 @@ class LiteLLMExceptions:
         self._load()
 
     def _load(self, strict=False):
+        import inspect
         import litellm
 
         for var in dir(litellm):
@@ -70,7 +71,7 @@ class LiteLLMExceptions:
         for var in self.exception_info:
             ex = getattr(litellm, var, "default")
 
-            if ex != "default":
+            if ex != "default" and inspect.isclass(ex) and issubclass(ex, BaseException):
                 self.exceptions[ex] = self.exception_info[var]
 
     def exceptions_tuple(self):
