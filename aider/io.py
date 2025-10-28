@@ -432,10 +432,7 @@ class InputOutput:
             else:
                 # A simple ascii spinner
                 self.spinner_frames = SPINNERS["line"]["frames"]
-        else:
-            self.spinner_frames = []
 
-        if fancy_input:
             # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
@@ -491,7 +488,7 @@ class InputOutput:
         if self.prompt_session:
             self.spinner_running = True
             self.spinner_text = text
-            self.spinner_frame_index = self.spinner_last_frame_index
+            self.spinner_frame_index = getattr(self, "spinner_last_frame_index", 0)
         else:
             self.fallback_spinner = Spinner(text)
             self.fallback_spinner.step()
@@ -501,7 +498,7 @@ class InputOutput:
         self.spinner_running = False
         self.spinner_text = ""
         # Keep last frame index to avoid spinner "jumping" on restart
-        self.spinner_last_frame_index = self.spinner_frame_index
+        self.spinner_last_frame_index = getattr(self, "spinner_frame_index", 0)
         if self.fallback_spinner:
             self.fallback_spinner.end()
             self.fallback_spinner = None
