@@ -423,9 +423,9 @@ class InputOutput:
         self.spinner_text = ""
         self.spinner_frame_index = 0
         self.spinner_last_frame_index = 0
+        self.unicode_palette = "░█"
 
         if fancy_input:
-            self.unicode_palette = "░█"
             # If unicode is supported, use the rich 'dots2' spinner, otherwise an ascii fallback
             if self._spinner_supports_unicode():
                 self.spinner_frames = SPINNERS["dots2"]["frames"]
@@ -1302,7 +1302,7 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.stream_print(show_resp)
+        self.console.print(show_resp)
 
     def render_markdown(self, text):
         output = StringIO()
